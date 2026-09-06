@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operation: PM2 Math Heist (4th Grade Fast Math)</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #38bdf8;
+      --cash: #22c55e;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --locked: #334155;
+      --border-color: #334155;
+      --input-bg: #1e293b;
+    }
+
+    body.light-mode {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --primary: #0284c7;
+      --cash: #16a34a;
+      --accent: #d97706;
+      --danger: #dc2626;
+      --text: #0f172a;
+      --locked: #e2e8f0;
+      --border-color: #cbd5e1;
+      --input-bg: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .game-container {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 850px;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 2px solid var(--border-color);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      position: relative;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      font-size: 0.95rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      background: var(--bg-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-weight: bold;
+      position: relative;
+    }
+
+    .cash-text {
+      color: var(--cash);
+      transition: transform 0.2s ease;
+    }
+
+    /* Cash Surge Glow & Animation */
+    @keyframes cashGlow {
+      0% { transform: scale(1); text-shadow: 0 0 0 rgba(34, 197, 94, 0); }
+      50% { transform: scale(1.2); text-shadow: 0 0 15px rgba(34, 197, 94, 0.8); }
+      100% { transform: scale(1); text-shadow: 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .cash-surge {
+      animation: cashGlow 0.5s ease;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-30px); }
+    }
+    .floating-surge {
+      position: absolute;
+      color: var(--cash);
+      font-weight: bold;
+      font-size: 1.1rem;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 10;
+    }
+
+    .theme-toggle-btn {
+      background: var(--locked);
+      color: var(--text);
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    /* POWER-UPS BAR */
+    .powerup-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      background: var(--bg-color);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .powerup-btn {
+      background: var(--locked);
+      color: var(--text);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .powerup-btn:hover:not(:disabled) {
+      background: var(--primary);
+      color: #0f172a;
+    }
+
+    .powerup-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* VERTICAL STACKED FRACTION STYLES */
+    .frac {
+      display: inline-flex;
+      vertical-align: middle;
+      padding: 0 4px;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .frac .whole {
+      font-size: 1.1em;
+      margin-right: 3px;
+      line-height: 1;
+    }
+
+    .frac .stacked {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 0.85em;
+      line-height: 1.1;
+    }
+
+    .frac .num {
+      border-bottom: 1.5px solid currentColor;
+      padding: 0 3px 1px 3px;
+    }
+
+    .frac .den {
+      padding: 1px 3px 0 3px;
+    }
+
+    /* SECTION CARDS GRID */
+    .sector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .sector-card {
+      background-color: var(--locked);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+    }
+
+    .sector-card.unlocked {
+      background-color: var(--bg-color);
+      border-color: var(--primary);
+      opacity: 1;
+    }
+
+    .sector-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    }
+
+    .sector-card.completed {
+      border-color: var(--cash);
+      background-color: #064e3b;
+      opacity: 1;
+    }
+
+    .sector-card.failed {
+      border-color: var(--danger);
+      background-color: #450a0a;
+      opacity: 1;
+    }
+
+    .sector-card .icon {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+
+    .sector-card .label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    /* QUESTION CONTAINER */
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .question-block {
+      background: var(--bg-color);
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-option {
+      background-color: var(--locked);
+      color: var(--text);
+      border: 2px solid transparent;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-option:hover:not(:disabled) {
+      background-color: #475569;
+      border-color: var(--primary);
+    }
+
+    .btn-option.correct {
+      background-color: var(--cash) !important;
+      color: white;
+    }
+
+    .btn-option.wrong {
+      background-color: var(--danger) !important;
+      color: white;
+    }
+
+    /* GRIDDED INPUT CONTAINER */
+    .gridded-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .gridded-input {
+      width: 80%;
+      max-width: 280px;
+      padding: 10px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: 2px solid var(--primary);
+      background-color: var(--input-bg);
+      color: var(--text);
+      text-align: center;
+      outline: none;
+    }
+
+    .btn-submit-grid {
+      background-color: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* EXPLANATION FEEDBACK BOX */
+    .explanation-box {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .explanation-box.correct-bg {
+      background-color: rgba(34, 197, 94, 0.15);
+      border-left: 4px solid var(--cash);
+      color: #86efac;
+    }
+
+    .explanation-box.wrong-bg {
+      background-color: rgba(239, 68, 68, 0.15);
+      border-left: 4px solid var(--danger);
+      color: #fca5a5;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .btn-action {
+      background-color: var(--cash);
+      color: #0f172a;
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: filter 0.2s ease;
+    }
+
+    .btn-action.retry {
+      background-color: var(--accent);
+    }
+
+    .btn-action.reset-btn {
+      background-color: transparent;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .btn-action.reset-btn:hover {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-action:hover {
+      filter: brightness(1.15);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .center-text {
+      text-align: center;
+    }
+
+    /* START SCREEN INPUTS & LEADERBOARD */
+    .alias-input {
+      width: 100%;
+      max-width: 320px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid var(--primary);
+      background-color: var(--input-bg);
+      color: var(--text);
+      text-align: center;
+      margin: 10px auto;
+      display: block;
+      outline: none;
+    }
+
+    .leaderboard-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 15px 0;
+      text-align: left;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container" id="game-card-container">
+    
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active center-text">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+        <button class="theme-toggle-btn" onclick="toggleTheme()">🌙 / ☀️ Toggle Theme</button>
+      </div>
+      <h1 style="color: var(--cash); font-size: 2rem; margin-bottom: 5px;">💰 PM Fast Math Bank Heist</h1>
+      <p style="font-size: 1.1rem; margin-bottom: 10px; color: purple;">Ms. Jean's Class</p>
+      <p style="margin-top: 0; font-size: 0.95rem;">Unlock all 3 section vaults by solving 53 4th Grade PM2 math questions!</p>
+      
+      <div style="margin: 15px 0;">
+        <label for="agent-alias" style="font-size: 0.9rem; font-weight: bold; color: var(--primary);">Secret Agent Codename:</label>
+        <input type="text" id="agent-alias" class="alias-input" placeholder="e.g. Agent 004" maxlength="20" autocomplete="off">
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--accent);">⚠️ <strong>Rules:</strong> Correct answers earn cash (+streak bonus at 5). Wrong answers cost <strong>-$10</strong> unless protected by a Shield! Get <strong>75%</strong> accuracy to unlock each level.</p>
+      
+      <div id="resume-banner" style="display: none; background: var(--bg-color); padding: 8px; border-radius: 8px; border: 1px solid var(--primary); margin: 10px 0; font-size: 0.9rem;">
+        📌 <strong>Saved Progress Found!</strong> Question: <span id="saved-q-num">1</span>/53 | Agent Cash: <span id="saved-cash" class="cash-text">$0</span>
+      </div>
+
+      <button class="btn-action" id="start-btn" onclick="startOrResumeGame()">CONTINUE HEIST</button>
+      
+      <!-- TOP SECRET LEADERBOARD -->
+      <div style="margin-top: 15px;">
+        <h3 style="font-size: 0.95rem; margin-bottom: 5px; color: var(--accent);">🏆 Top Secret Leaderboard</h3>
+        <div class="leaderboard-box" id="leaderboard-list">
+          <div style="text-align: center; color: #94a3b8; font-size: 0.85rem;">No missions completed yet. Be the first!</div>
+        </div>
+      </div>
+
+      <button class="btn-action reset-btn" style="margin-top: 10px; font-size: 0.85rem; padding: 6px;" onclick="resetAllProgress()">RESET GAME PROGRESS (Keeps Total Cash)</button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen">
+      <div class="header">
+        <div style="font-weight: bold; font-size: 0.95rem;" id="question-tracker">Question 1/53</div>
+        <div class="stats">
+          <div class="stat-badge">Agent: <span id="current-agent-display" style="color: var(--primary);">Agent</span></div>
+          <div class="stat-badge">Total Cash: <span id="cash" class="cash-text">$0</span></div>
+          <div class="stat-badge">🔥 Streak: <span id="streak">0</span></div>
+          <button class="theme-toggle-btn" onclick="toggleTheme()">🌙 / ☀️</button>
+        </div>
+      </div>
+
+      <!-- POWER-UP BAR -->
+      <div class="powerup-bar">
+        <div style="font-size: 0.85rem; font-weight: bold; color: var(--accent);">🛠️ Tactical Gear:</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="powerup-btn" id="shield-btn" onclick="useLaserShield()">🛡️ Shield (<span id="shield-count">1</span>)</button>
+        </div>
+      </div>
+
+      <div class="sector-grid" id="sector-grid"></div>
+
+      <div class="section-title" id="section-title"></div>
+
+      <div class="question-block">
+        <div class="question-text" id="question-text"></div>
+        <div id="interaction-container"></div>
+        <div class="explanation-box" id="explanation-box"></div>
+      </div>
+
+      <div class="feedback" id="feedback-text"></div>
+      
+      <button class="btn-action" id="next-btn" style="display: none;" onclick="nextQuestion()">NEXT QUESTION ➔</button>
+      <button class="btn-action" id="next-sec-btn" style="display: none;" onclick="advanceSection()">UNLOCK NEXT SECTION ➔</button>
+      <button class="btn-action retry" id="retry-btn" style="display: none;" onclick="retrySection()">🔄 RETRY SECTION (Need 75%)</button>
+    </div>
+
+    <!-- END SCREEN -->
+    <div id="end-screen" class="screen center-text">
+      <h2>🎉 ALL VAULTS UNLOCKED!</h2>
+      <p style="font-size: 1.3rem;">Agent <span id="end-agent-name" style="color: var(--primary);"></span> Earnings: <strong id="final-cash" class="cash-text">$0</strong></p>
+      <p id="rank-text" style="font-size: 1.05rem; margin-bottom: 15px;"></p>
+      
+      <div style="max-width: 400px; margin: 0 auto 15px auto;">
+        <h3 style="font-size: 0.95rem; margin-bottom: 5px; color: var(--accent);">🏆 Final Mission Leaderboard</h3>
+        <div class="leaderboard-box" id="end-leaderboard-list"></div>
+      </div>
+
+      <button class="btn-action" onclick="returnToStartScreen()">START NEW HEIST RUN</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Helper function to build stacked HTML fractions
+    function f(num, den, whole = '') {
+      const wHtml = whole !== '' ? `<span class="whole">${whole}</span>` : '';
+      return `<span class="frac">${wHtml}<span class="stacked"><span class="num">${num}</span><span class="den">${den}</span></span></span>`;
+    }
+
+    const sections = [
+      { id: 1, name: "Section 1: PM2 Practice Vault (Items 1 - 20)" },
+      { id: 2, name: "Section 2: PM2 Mastery Vault (Items 21 - 40)" },
+      { id: 3, name: "Section 3: PM2 Advanced Vault (Items 41 - 53)" }
+    ];
+
+    const quizDataOriginal = [
+      // SECTION 1
+      { sectionId: 1, type: "grid", question: `<b>✏️ Gridded Response:</b> The height of a flagpole measures ${f(3, 10, 18)} feet. What decimal is equivalent to ${f(3, 10, 18)}?`, answer: "18.3", explanation: `${f(3, 10, 18)} written as a decimal is 18.3.` },
+      { sectionId: 1, type: "grid", question: "<b>✏️ Gridded Response:</b> Samantha created a pattern using square tiles:<br>Figure 1: 3 tiles<br>Figure 2: 6 tiles<br>Figure 3: 9 tiles<br>Figure 6: ? tiles<br>If Samantha continues the pattern, what should be the total number of square tiles in Figure 6?", answer: "18", explanation: "The pattern increases by 3 tiles each figure (3 × n). For Figure 6: 6 × 3 = 18 tiles." },
+      { sectionId: 1, type: "grid", question: "<b>✏️ Gridded Response:</b> Mr. Jackson bought 3 new desktop computers for his classroom. Each computer cost $245. How much did Mr. Jackson pay in total for the 3 computers?", answer: "735", explanation: "Multiply 245 × 3 = $735." },
+      { sectionId: 1, type: "mc", question: "David lives 4 miles from school. He rode his bike directly to and from school 5 days last week. Which expression could be used to find the total number of miles he rode his bike to and from school last week?", labels: ["A", "B", "C", "D"], options: ["5 + 8", "5 × 8", "5 + 4", "5 × 4"], answer: 1, explanation: "Riding to and from school each day is 4 + 4 = 8 miles. For 5 days, the total is 5 × 8 miles." },
+      { sectionId: 1, type: "mc", question: "A directional sign in front of a park rotated 90° counter-clockwise after a strong wind. Which of the following shows how the sign turned?", labels: ["F", "G", "H", "I"], options: ["Turned a quarter-turn to the left", "Turned a half-turn upside down", "Turned a full circle back to the start", "Turned a quarter-turn to the right"], answer: 0, explanation: "90° counter-clockwise represents a quarter-turn to the left." },
+      { sectionId: 1, type: "mc", question: "The table shows juice box prices:<br>3 boxes = $2<br>6 boxes = $4<br>9 boxes = $6<br>12 boxes = $8<br>According to the relationship shown in the table, what would be the price, in dollars, of 15 juice boxes?", labels: ["A", "B", "C", "D"], options: ["$9", "$10", "$12", "$14"], answer: 1, explanation: "Each 3 juice boxes cost $2. For 15 juice boxes (5 groups of 3), the price is 5 × $2 = $10." },
+      { sectionId: 1, type: "mc", question: `At Oak Ridge Elementary, ${f(18, 60)} of the fourth-grade students participate in the school choir. Which fraction is equivalent to ${f(18, 60)}?`, labels: ["F", "G", "H", "I"], options: [f(3, 10), f(3, 6), f(1, 3), f(6, 10)], answer: 0, explanation: `Divide numerator and denominator by 6: (18 ÷ 6) / (60 ÷ 6) = ${f(3, 10)}.` },
+      { sectionId: 1, type: "mc", question: "The distance between two city landmarks is 3.5 miles. Which of the following is equivalent to 3.5?", labels: ["A", "B", "C", "D"], options: [f(1, 5, 3), f(5, 100, 3), f(5, 10, 3), f(1, 50, 3)], answer: 2, explanation: `3.5 represents 3 and 5 tenths, which is written as ${f(5, 10, 3)}.` },
+      { sectionId: 1, type: "mc", question: "Marcus weighed his kitten on a scale, and it weighed 6.8 pounds. Which mixed number is closest in value to 6.8?", labels: ["F", "G", "H", "I"], options: [f(1, 4, 6), f(1, 2, 6), f(3, 4, 6), f(9, 10, 6)], answer: 3, explanation: `6.8 = ${f(8, 10, 6)}. Among the choices, ${f(9, 10, 6)} (6.9) is closest to 6.8.` },
+      { sectionId: 1, type: "mc", question: "Olivia started with $25 in her savings account. She plans to add $15 to her account each week. Let <i>w</i> represent the number of weeks. Which expression represents the total amount saved in <i>w</i> weeks?", labels: ["A", "B", "C", "D"], options: ["25 + 15w", "15 + 25w", "(25 + 15)w", "25w + 15"], answer: 0, explanation: "Starting amount + (weekly savings × weeks) = 25 + 15w." },
+      { sectionId: 1, type: "grid", question: "<b>✏️ Gridded Response:</b> The population of a town in 2015 was 12,450. In 2020, the population increased to 15,825. By how much did the population of the town increase from 2015 to 2020?", answer: "3375", explanation: "Subtract: 15,825 - 12,450 = 3,375." },
+      { sectionId: 1, type: "mc", question: "Five friends are sharing 23 apples equally. Which situation correctly describes how the apples can be shared among the 5 friends?", labels: ["F", "G", "H", "I"], options: ["Each friend gets 4 whole apples, and 3 apples are left over.", "Each friend gets 5 whole apples, and 2 apples are left over.", "Each friend gets 3 whole apples, and 8 apples are left over.", "Each friend gets 4 whole apples, and 1 apple is left over."], answer: 0, explanation: "23 ÷ 5 = 4 with a remainder of 3." },
+      { sectionId: 1, type: "mc", question: "Which of the following lists all of the factors of 36?", labels: ["A", "B", "C", "D"], options: ["1, 2, 3, 4, 6, 9, 12, 18, 36", "2, 3, 4, 6, 9, 12, 18", "1, 2, 4, 6, 9, 18, 36", "3, 6, 9, 12, 18, 36"], answer: 0, explanation: "The complete set of factors of 36 includes 1, 2, 3, 4, 6, 9, 12, 18, 36." },
+      { sectionId: 1, type: "mc", question: "A clothing store offered a discount of 50% off all winter coats. Which fraction is equivalent to 50%?", labels: ["F", "G", "H", "I"], options: [f(1, 5), f(1, 4), f(1, 2), f(3, 4)], answer: 2, explanation: `50% = ${f(50, 100)} = ${f(1, 2)}.` },
+      { sectionId: 1, type: "mc", question: "A family eats between 28 and 34 slices of bread per week. Which of the following is the best estimate of the total number of slices of bread the family eats in 4 weeks?", labels: ["A", "B", "C", "D"], options: ["80", "120", "160", "200"], answer: 1, explanation: "30 slices/week × 4 weeks = 120 slices." },
+      { sectionId: 1, type: "mc", question: "A rectangular garden plot has an area of about 42 square feet. If the length of the garden is 7 feet, what is the width of the garden?", labels: ["F", "G", "H", "I"], options: ["5 feet", "6 feet", "7 feet", "8 feet"], answer: 1, explanation: "Area = length × width → 42 ÷ 7 = 6 feet." },
+      { sectionId: 1, type: "mc", question: "Workers are putting down new carpet in a rectangular classroom. For which situation would the workers need to calculate the area of the room?", labels: ["A", "B", "C", "D"], options: ["Finding the length of baseboard molding needed around the walls", "Determining the amount of floor space the carpet will cover", "Finding the height from the floor to the ceiling", "Measuring the distance around the doorway"], answer: 1, explanation: "Carpet covers the flat surface of the floor, which requires calculating area." },
+      { sectionId: 1, type: "grid", question: "<b>✏️ Gridded Response:</b> Using a standard ruler, a student measures a rectangular bookmark that is 2 inches wide and 6 inches long. What is the area, in square inches, of the bookmark?", answer: "12", explanation: "Area = 2 inches × 6 inches = 12 square inches." },
+      { sectionId: 1, type: "mc", question: "Look at the hands on a clock showing 2:00 PM. Which type of angle is formed by the hour hand and the minute hand?", labels: ["A", "B", "C", "D"], options: ["Acute", "Right", "Obtuse", "Straight"], answer: 0, explanation: "At 2:00, the hands form a 60° angle, which is acute (less than 90°)." },
+      { sectionId: 1, type: "mc", question: "A 3D block figure is made using 5 unit cubes stacked in a single row. Which shape represents the top view of this figure?", labels: ["F", "G", "H", "I"], options: ["A rectangle made of 5 small squares", "A single square", "A triangle", "A cube"], answer: 0, explanation: "Looking down from above on 5 cubes in a row shows a long rectangle made of 5 adjacent squares." },
+
+      // SECTION 2
+      { sectionId: 2, type: "grid", question: `<b>✏️ Gridded Response:</b> A recipe calls for ${f(4, 10, 3)} cups of flour. What decimal is equivalent to ${f(4, 10, 3)}?`, answer: "3.4", explanation: `${f(4, 10, 3)} expressed in decimal form is 3.4.` },
+      { sectionId: 2, type: "grid", question: "<b>✏️ Gridded Response:</b> A sequence of dots follows the pattern:<br>Step 1: 4 dots<br>Step 2: 8 dots<br>Step 3: 12 dots<br>Step 5: ? dots<br>If the pattern continues, how many total dots will be in Step 5?", answer: "20", explanation: "The rule is 4 × Step Number. For Step 5: 4 × 5 = 20 dots." },
+      { sectionId: 2, type: "grid", question: "<b>✏️ Gridded Response:</b> An auditorium has 8 rows of seats. Each row contains 115 seats. What is the total number of seats in the auditorium?", answer: "920", explanation: "Multiply 115 × 8 = 920." },
+      { sectionId: 2, type: "mc", question: "Sarah walks 2 miles to the park and 2 miles back home. She did this 4 times this week. Which expression shows the total number of miles Sarah walked?", labels: ["A", "B", "C", "D"], options: ["4 + 4", "4 × 4", "2 + 4", "2 × 4"], answer: 1, explanation: "Each round trip is 2 + 2 = 4 miles. Doing this 4 times is 4 × 4." },
+      { sectionId: 2, type: "mc", question: "A square tile is rotated 180° clockwise. Which statement best describes the position of the tile after the rotation?", labels: ["F", "G", "H", "I"], options: ["It turned a quarter-turn to the right.", "It turned completely upside down.", "It turned a quarter-turn to the left.", "It returned to its original starting position."], answer: 1, explanation: "A 180° rotation is a half-turn, leaving the object upside down." },
+      { sectionId: 2, type: "mc", question: "The table shows bicycle rental rates:<br>1 hour = $5<br>2 hours = $10<br>3 hours = $15<br>4 hours = $20<br>Based on the pattern in the table, what is the cost to rent a bicycle for 7 hours?", labels: ["A", "B", "C", "D"], options: ["$25", "$30", "$35", "$40"], answer: 2, explanation: "Cost = $5 per hour. For 7 hours: 7 × $5 = $35." },
+      { sectionId: 2, type: "mc", question: `A pizza is sliced into 12 equal pieces. If 4 slices are eaten, what fraction equivalent to ${f(4, 12)} of the pizza was eaten?`, labels: ["F", "G", "H", "I"], options: [f(1, 4), f(1, 3), f(1, 2), f(2, 3)], answer: 1, explanation: `Divide numerator and denominator by 4: (4 ÷ 4) / (12 ÷ 4) = ${f(1, 3)}.` },
+      { sectionId: 2, type: "mc", question: "The weight of a small package is 4.5 pounds. Which mixed number represents 4.5?", labels: ["A", "B", "C", "D"], options: [f(1, 2, 4), f(1, 5, 4), f(5, 100, 4), f(1, 50, 4)], answer: 0, explanation: `4.5 = ${f(5, 10, 4)} = ${f(1, 2, 4)}.` },
+      { sectionId: 2, type: "mc", question: "A stick measures 7.2 centimeters in length. Which fraction or mixed number is closest in value to 7.2?", labels: ["F", "G", "H", "I"], options: [f(1, 10, 7), f(1, 4, 7), f(1, 2, 7), f(3, 4, 7)], answer: 1, explanation: `${f(1, 4, 7)} = 7.25, which is closest to 7.2.` },
+      { sectionId: 2, type: "mc", question: "A gym membership costs $30 upfront plus $20 per month. Let <i>m</i> represent the number of months. Which expression represents the total cost of the gym membership for <i>m</i> months?", labels: ["A", "B", "C", "D"], options: ["30m + 20", "30 + 20m", "(30 + 20)m", "30 + 20 + m"], answer: 1, explanation: "Flat fee + ($20 × months) = 30 + 20m." },
+      { sectionId: 2, type: "grid", question: "<b>✏️ Gridded Response:</b> A library had 28,450 books at the beginning of the year. By the end of the year, the library had 31,200 books. How many books were added to the library during the year?", answer: "2750", explanation: "Subtract: 31,200 - 28,450 = 2,750." },
+      { sectionId: 2, type: "mc", question: "A teacher has 34 pencils to distribute equally among 6 students. How many pencils will each student receive, and how many will be left over?", labels: ["F", "G", "H", "I"], options: ["Each student gets 5 pencils with 4 left over.", "Each student gets 6 pencils with 2 left over.", "Each student gets 5 pencils with 2 left over.", "Each student gets 4 pencils with 10 left over."], answer: 0, explanation: "34 ÷ 6 = 5 with 4 left over." },
+      { sectionId: 2, type: "mc", question: "Which of the following lists all of the factors of 24?", labels: ["A", "B", "C", "D"], options: ["1, 2, 3, 4, 6, 8, 12, 24", "2, 3, 4, 6, 8, 12", "1, 2, 4, 6, 12, 24", "1, 3, 8, 24"], answer: 0, explanation: "Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24." },
+      { sectionId: 2, type: "mc", question: "A sports store discounted a basketball by 25%. Which fraction is equivalent to 25%?", labels: ["F", "G", "H", "I"], options: [f(1, 2), f(1, 3), f(1, 4), f(3, 4)], answer: 2, explanation: `25% = ${f(25, 100)} = ${f(1, 4)}.` },
+      { sectionId: 2, type: "mc", question: "A school bus travels between 18 and 22 miles per route. Which of the following is the best estimate of the total miles traveled over 5 routes?", labels: ["A", "B", "C", "D"], options: ["50 miles", "100 miles", "150 miles", "200 miles"], answer: 1, explanation: "20 miles per route × 5 routes = 100 miles." },
+      { sectionId: 2, type: "mc", question: "A rectangular rug covers an area of 48 square feet. The width of the rug is 6 feet. What is the length of the rug?", labels: ["F", "G", "H", "I"], options: ["6 feet", "7 feet", "8 feet", "9 feet"], answer: 2, explanation: "48 ÷ 6 = 8 feet." },
+      { sectionId: 2, type: "mc", question: "A farmer wants to put a fence around a rectangular goat pen. Which measurement calculation should the farmer use to determine how much fencing to buy?", labels: ["A", "B", "C", "D"], options: ["Area", "Volume", "Perimeter", "Height"], answer: 2, explanation: "Fencing goes around the outer boundary, which requires calculating perimeter." },
+      { sectionId: 2, type: "grid", question: "<b>✏️ Gridded Response:</b> A rectangular cardboard box top measures 5 inches long by 4 inches wide. What is the area, in square inches, of the box top?", answer: "20", explanation: "Area = 5 × 4 = 20 square inches." },
+      { sectionId: 2, type: "mc", question: "Look at the hands on a clock showing 3:00 PM. What type of angle is formed by the hour hand and the minute hand?", labels: ["A", "B", "C", "D"], options: ["Acute", "Right", "Obtuse", "Straight"], answer: 1, explanation: "At 3:00, the hands form a 90° right angle." },
+      { sectionId: 2, type: "mc", question: "A student stacks 4 wooden cubes vertically on top of each other. What shape is seen when looking directly down at the figure from the top?", labels: ["F", "G", "H", "I"], options: ["A tall rectangle", "A single square", "A triangle", "A circle"], answer: 1, explanation: "Looking straight down from above on a single vertical stack reveals a single square top face." },
+
+      // SECTION 3
+      { sectionId: 3, type: "grid", question: "<b>✏️ Gridded Response:</b> What number is one-hundredth more than 732.19?", answer: "732.2", explanation: "One-hundredth is 0.01. Adding 732.19 + 0.01 = 732.20 (or 732.2)." },
+      { sectionId: 3, type: "mc", question: "Order the following numbers from greatest to least:<br>419.572, 431.257, 413.725", labels: ["A", "B", "C", "D"], options: ["431.257, 419.572, 413.725", "413.725, 419.572, 431.257", "431.257, 413.725, 419.572", "419.572, 431.257, 413.725"], answer: 0, explanation: "Comparing hundred digits then tens: 431.257 > 419.572 > 413.725." },
+      { sectionId: 3, type: "grid", question: `<b>✏️ Gridded Response:</b> Hanson needs ${f(3, 5, 8)} cups of flour to make dough. He already added ${f(2, 5, 6)} cups. How many more cups of flour does Hanson need to add?`, answer: "2.2", explanation: `Subtract: ${f(3, 5, 8)} - ${f(2, 5, 6)} = ${f(1, 5, 2)} cups = 2.2 cups.` },
+      { sectionId: 3, type: "mc", question: "Mercy draws a rectangle with an area of 12 sq in and perimeter of 19 in (dimensions 1.5 by 8). She wants to draw a second rectangle with the <b>same perimeter (19 in)</b> but a <b>different area</b>. Which dimensions could work?", labels: ["A", "B", "C", "D"], options: ["Length = 2 inches, Width = 7.5 inches", "Length = 3 inches, Width = 4 inches", "Length = 5 inches, Width = 5 inches", "Length = 4 inches, Width = 6 inches"], answer: 0, explanation: "Perimeter = 2 × (L + W). For L=2 and W=7.5, Perimeter = 2 × 9.5 = 19 in. The Area is 2 × 7.5 = 15 sq in (different area!)." },
+      { sectionId: 3, type: "mc", question: `Hannah has 3 baseballs. Each baseball is worth ${f(5, 16)} pound. Which expression represents the total weight, in pounds, of all 3 baseballs?`, labels: ["A", "B", "C", "D"], options: [`${f(5, 16)} + ${f(5, 16)} + ${f(5, 16)}`, `${f(5, 16)} + 3`, `${f(5, 16)} × 2`, `${f(5, 16)} × ${f(3, 3)}`], answer: 0, explanation: `Adding ${f(5, 16)} three times (${f(5, 16)} + ${f(5, 16)} + ${f(5, 16)}) gives the total weight of 3 baseballs.` },
+      { sectionId: 3, type: "mc", question: `Which decimal is equivalent to both ${f(9, 10)} and ${f(90, 100)}?`, labels: ["A", "B", "C", "D"], options: ["0.9", "0.09", "0.009", "9.0"], answer: 0, explanation: `0.9 is equal to ${f(9, 10)} and ${f(90, 100)}.` },
+      { sectionId: 3, type: "mc", question: "Compare 237.1 and 237.4.<br>Select the correct comparison and explanation:", labels: ["A", "B", "C", "D"], options: ["237.1 < 237.4 because 1 tenth is less than 4 tenths", "237.1 > 237.4 because 1 tenth is greater than 4 tenths", "237.1 < 237.4 because 1 hundredth is less than 4 tenths", "237.1 > 237.4 because 1 tenth is less than 4 hundredths"], answer: 0, explanation: "237.1 < 237.4 because 1 tenth (0.1) is less than 4 tenths (0.4)." },
+      { sectionId: 3, type: "grid", question: `<b>✏️ Gridded Response:</b> What is the value of ${f(3, 8, 3)} - ${f(6, 8, 2)}?`, answer: "0.625", explanation: `Convert to improper fractions: ${f(27, 8)} - ${f(22, 8)} = ${f(5, 8)} = 0.625.` },
+      { sectionId: 3, type: "mc", question: "Which set of shapes ALL contain at least one acute angle (an angle less than 90°)?", labels: ["A", "B", "C", "D"], options: ["Acute triangle, Parallelogram, Trapezoid", "Square, Rectangle, Oblong", "Rectangle, Square, Right trapezoid", "Circle, Line, Point"], answer: 0, explanation: "Acute triangles, non-rectangular parallelograms, and non-rectangular trapezoids all feature acute angles." },
+      { sectionId: 3, type: "mc", question: `Layla reads every day for a week: 2, ${f(1, 2)}, ${f(1, 2, 1)}, ${f(1, 4)}, 1, ${f(3, 4, 1)}, ${f(1, 2, 1)} hours.<br>How many days did Layla read for <b>at least ${f(1, 2, 1)} hours</b>?`, labels: ["A", "B", "C", "D"], options: ["4 days", "2 days", "3 days", "5 days"], answer: 0, explanation: `The values ≥ ${f(1, 2, 1)} are: 2, ${f(1, 2, 1)}, ${f(3, 4, 1)}, and ${f(1, 2, 1)} (4 total days).` },
+      { sectionId: 3, type: "mc", question: "Look at the list of four decimal numbers: <b>3.75, 4.25, 3.5, 4.0</b><br>Which number is the largest decimal in the list?", labels: ["A", "B", "C", "D"], options: ["4.25", "4.0", "3.75", "3.5"], answer: 0, explanation: "4.25 is the greatest number among the list." },
+      { sectionId: 3, type: "mc", question: "Vince reads <i>y</i> poems each day for 5 days. He reads a total of 45 poems.<br>Which equation represents how many poems, <i>y</i>, Vince reads each day?", labels: ["A", "B", "C", "D"], options: ["5y = 45", "y + 5 = 45", "y - 5 = 45", "5 / y = 45"], answer: 0, explanation: "5 days × y poems per day = 45 total poems (5y = 45, so y = 9)." },
+      { sectionId: 3, type: "mc", question: "Amy and Gilbert ride their bikes 8 miles every hour for 3 hours. Amy wrote <i>m ÷ 3 = 8</i> and Gilbert wrote <i>3 × m = 8</i>.<br>Who wrote the correct equation, and how many miles did they ride?", labels: ["A", "B", "C", "D"], options: ["Only Amy's equation; they rode 24 miles", "Only Gilbert's equation; they rode 24 miles", "Both equations are correct; they rode 24 miles", "Only Amy's equation; they rode 11 miles"], answer: 0, explanation: "Total miles (m) ÷ 3 hours = 8 miles/hr → m = 24 miles. Amy's equation is correct." }
+    ];
+
+    let quizData = [];
+    let currentQuestionIdx = 0;
+    let cash = 0;
+    let streak = 0;
+    let sectionCorrect = 0;
+    let sectionTotal = 0;
+    let agentAlias = "Agent";
+    let shieldsAvailable = 1;
+
+    // Fisher-Yates Shuffle helper
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function randomizeQuizSections() {
+      const sec1 = quizDataOriginal.filter(q => q.sectionId === 1);
+      const sec2 = quizDataOriginal.filter(q => q.sectionId === 2);
+      const sec3 = quizDataOriginal.filter(q => q.sectionId === 3);
+      shuffleArray(sec1);
+      shuffleArray(sec2);
+      shuffleArray(sec3);
+      quizData = [...sec1, ...sec2, ...sec3];
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      localStorage.setItem('pm2_theme', isLight ? 'light' : 'dark');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('pm2_theme');
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+
+      const savedCash = localStorage.getItem('pm2_lifetime_cash');
+      cash = savedCash ? parseInt(savedCash, 10) : 0;
+      updateStats();
+      renderLeaderboards();
+      checkSavedProgress();
+    });
+
+    function saveProgress() {
+      localStorage.setItem('pm2_lifetime_cash', cash);
+      const gameState = {
+        currentQuestionIdx,
+        streak,
+        sectionCorrect,
+        sectionTotal,
+        quizData,
+        agentAlias,
+        shieldsAvailable
+      };
+      localStorage.setItem('pm2_math_heist_save', JSON.stringify(gameState));
+    }
+
+    function checkSavedProgress() {
+      const saved = localStorage.getItem('pm2_math_heist_save');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.currentQuestionIdx > 0 && data.currentQuestionIdx < quizDataOriginal.length) {
+          document.getElementById('saved-q-num').innerText = data.currentQuestionIdx + 1;
+          document.getElementById('saved-cash').innerText = `$${cash.toLocaleString()}`;
+          if (data.agentAlias) {
+            document.getElementById('agent-alias').value = data.agentAlias;
+          }
+          document.getElementById('resume-banner').style.display = 'block';
+          document.getElementById('start-btn').innerText = 'RESUME HEIST ➔';
+          return true;
+        }
+      }
+      document.getElementById('resume-banner').style.display = 'none';
+      document.getElementById('start-btn').innerText = 'START VAULT HEIST';
+      return false;
+    }
+
+    function startOrResumeGame() {
+      const aliasInput = document.getElementById('agent-alias').value.trim();
+      agentAlias = aliasInput !== "" ? aliasInput : "Agent 007";
+
+      const saved = localStorage.getItem('pm2_math_heist_save');
+      if (saved && document.getElementById('resume-banner').style.display === 'block') {
+        const data = JSON.parse(saved);
+        currentQuestionIdx = data.currentQuestionIdx || 0;
+        streak = data.streak || 0;
+        sectionCorrect = data.sectionCorrect || 0;
+        sectionTotal = data.sectionTotal || 0;
+        shieldsAvailable = data.shieldsAvailable !== undefined ? data.shieldsAvailable : 1;
+        quizData = data.quizData && data.quizData.length === quizDataOriginal.length ? data.quizData : [...quizDataOriginal];
+        if(data.agentAlias) agentAlias = data.agentAlias;
+      } else {
+        randomizeQuizSections();
+        currentQuestionIdx = 0;
+        streak = 0;
+        sectionCorrect = 0;
+        sectionTotal = 0;
+        shieldsAvailable = 1; // 1 Laser Shield per run
+      }
+
+      document.getElementById('current-agent-display').innerText = agentAlias;
+      updateShieldButtonUI();
+      showScreen('game-screen');
+      updateStats();
+      loadQuestion();
+    }
+
+    function returnToStartScreen() {
+      showScreen('start-screen');
+      checkSavedProgress();
+      renderLeaderboards();
+    }
+
+    function resetAllProgress() {
+      localStorage.removeItem('pm2_math_heist_save');
+      randomizeQuizSections();
+      currentQuestionIdx = 0;
+      streak = 0;
+      sectionCorrect = 0;
+      sectionTotal = 0;
+      shieldsAvailable = 1;
+      showScreen('start-screen');
+      checkSavedProgress();
+      renderLeaderboards();
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function updateStats() {
+      document.getElementById('cash').innerText = `$${cash.toLocaleString()}`;
+      document.getElementById('streak').innerText = streak;
+    }
+
+    // Trigger Coin Surge Animation & Floating Text
+    function triggerCoinSurge(amount) {
+      const cashBadge = document.getElementById('cash').parentElement;
+      cashBadge.classList.remove('cash-surge');
+      void cashBadge.offsetWidth; // trigger reflow
+      cashBadge.classList.add('cash-surge');
+
+      const floatEl = document.createElement('div');
+      floatEl.className = 'floating-surge';
+      floatEl.innerText = `+$${amount}`;
+      
+      const rect = cashBadge.getBoundingClientRect();
+      const containerRect = document.getElementById('game-card-container').getBoundingClientRect();
+      
+      floatEl.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
+      floatEl.style.top = (rect.top - containerRect.top) + 'px';
+      
+      document.getElementById('game-card-container').appendChild(floatEl);
+      setTimeout(() => floatEl.remove(), 800);
+    }
+
+    // Power-Up: Laser Shield
+    function useLaserShield() {
+      if (shieldsAvailable > 0) {
+        shieldsAvailable--;
+        updateShieldButtonUI();
+        document.getElementById('feedback-text').innerText = "🛡️ Laser Shield Engaged! Next wrong penalty will be blocked.";
+        document.getElementById('feedback-text').style.color = "var(--primary)";
+      }
+    }
+
+    function updateShieldButtonUI() {
+      const btn = document.getElementById('shield-btn');
+      const countSpan = document.getElementById('shield-count');
+      countSpan.innerText = shieldsAvailable;
+      if (shieldsAvailable <= 0) {
+        btn.disabled = true;
+      } else {
+        btn.disabled = false;
+      }
+    }
+
+    function loadQuestion() {
+      saveProgress();
+      const q = quizData[currentQuestionIdx];
+      const currentSec = sections.find(s => s.id === q.sectionId);
+
+      document.getElementById('question-tracker').innerText = `Question ${currentQuestionIdx + 1}/${quizData.length}`;
+      document.getElementById('section-title').innerText = currentSec.name;
+      document.getElementById('question-text').innerHTML = q.question;
+      
+      const expBox = document.getElementById('explanation-box');
+      expBox.style.display = 'none';
+      expBox.className = 'explanation-box';
+
+      document.getElementById('feedback-text').innerText = '';
+      document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('next-sec-btn').style.display = 'none';
+      document.getElementById('retry-btn').style.display = 'none';
+
+      const container = document.getElementById('interaction-container');
+      container.innerHTML = '';
+
+      if (q.type === 'mc') {
+        const grid = document.createElement('div');
+        grid.className = 'options-grid';
+
+        q.options.forEach((opt, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'btn-option';
+          const labelPrefix = q.labels ? q.labels[optIdx] : String.fromCharCode(65 + optIdx);
+          btn.innerHTML = `${labelPrefix}) &nbsp; ${opt}`;
+          btn.onclick = () => checkMCAnswer(optIdx, btn);
+          grid.appendChild(btn);
+        });
+
+        container.appendChild(grid);
+      } else if (q.type === 'grid') {
+        const gridBox = document.createElement('div');
+        gridBox.className = 'gridded-container';
+        gridBox.innerHTML = `
+          <input type="text" id="grid-input" class="gridded-input" placeholder="Type answer here..." autocomplete="off">
+          <button class="btn-submit-grid" onclick="checkGridAnswer()">SUBMIT ANSWER</button>
+        `;
+        container.appendChild(gridBox);
+      }
+
+      renderSectionCards();
+    }
+
+    function renderSectionCards() {
+      const grid = document.getElementById('sector-grid');
+      grid.innerHTML = '';
+      
+      sections.forEach(sec => {
+        const card = document.createElement('div');
+        const secId = sec.id;
+        card.id = `sec-card-${secId}`;
+        card.className = 'sector-card';
+
+        const currentSecId = quizData[currentQuestionIdx] ? quizData[currentQuestionIdx].sectionId : 1;
+        
+        let icon = '🔒';
+        if (secId < currentSecId) {
+          card.classList.add('completed');
+          icon = '✅';
+        } else if (secId === currentSecId) {
+          card.classList.add('unlocked', 'active');
+          icon = '🔓';
+        } else {
+          card.classList.add('locked');
+          icon = '🔒';
+        }
+
+        card.innerHTML = `
+          <div class="icon" id="sec-icon-${secId}">${icon}</div>
+          <div class="label">Section ${secId}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function checkMCAnswer(selectedOpt, btnElement) {
+      const q = quizData[currentQuestionIdx];
+      const buttons = document.querySelectorAll('.btn-option');
+      buttons.forEach(b => b.disabled = true);
+
+      const isCorrect = (selectedOpt === q.answer);
+      const correctLabel = q.labels ? q.labels[q.answer] : String.fromCharCode(65 + q.answer);
+
+      processAnswer(isCorrect, `<strong>💡 Correct Answer: ${correctLabel}) ${q.options[q.answer]}</strong><br>${q.explanation}`, btnElement);
+    }
+
+    function checkGridAnswer() {
+      const q = quizData[currentQuestionIdx];
+      const inputEl = document.getElementById('grid-input');
+      const submitBtn = document.querySelector('.btn-submit-grid');
+      if (!inputEl) return;
+
+      const userVal = inputEl.value.trim().replace(/,/g, '');
+      inputEl.disabled = true;
+      if (submitBtn) submitBtn.disabled = true;
+
+      const isCorrect = (userVal === q.answer.toString().trim());
+
+      processAnswer(isCorrect, `<strong>💡 Correct Answer: ${q.answer}</strong><br>${q.explanation}`, inputEl);
+    }
+
+    function processAnswer(isCorrect, wrongMsg, element) {
+      const q = quizData[currentQuestionIdx];
+      sectionTotal++;
+      const expBox = document.getElementById('explanation-box');
+
+      if (isCorrect) {
+        if (element && element.classList) element.classList.add('correct');
+        streak++;
+        sectionCorrect++;
+        let earned = (streak >= 5) ? 150 : 100;
+        cash += earned; 
+
+        triggerCoinSurge(earned);
+
+        document.getElementById('feedback-text').innerText = streak >= 5 
+          ? `🔥 5-STREAK BONUS! +$${earned} Earned!` 
+          : `💵 Vault Cracked! +$${earned} Earned!`;
+        document.getElementById('feedback-text').style.color = 'var(--cash)';
+
+        expBox.className = 'explanation-box correct-bg';
+        expBox.innerHTML = `<strong>✅ Correct!</strong><br>${q.explanation}`;
+        expBox.style.display = 'block';
+      } else {
+        // Check if Laser Shield absorbs the penalty
+        if (shieldsAvailable > 0) {
+          shieldsAvailable--;
+          updateShieldButtonUI();
+          if (element && element.classList) element.classList.add('wrong');
+          
+          expBox.className = 'explanation-box correct-bg';
+          expBox.innerHTML = `<strong>🛡️ Laser Shield Activated!</strong> Penalty blocked & streak saved!<br>${q.explanation}`;
+          expBox.style.display = 'block';
+          document.getElementById('feedback-text').innerText = '🛡️ Shield Blocked the Alarm!';
+          document.getElementById('feedback-text').style.color = 'var(--primary)';
+        } else {
+          if (element && element.classList) element.classList.add('wrong');
+          streak = 0;
+          cash = Math.max(0, cash - 10);
+
+          document.getElementById('feedback-text').innerText = '🔒 Alarm Triggered! -$10 Penalty';
+          document.getElementById('feedback-text').style.color = 'var(--danger)';
+
+          expBox.className = 'explanation-box wrong-bg';
+          expBox.innerHTML = wrongMsg;
+          expBox.style.display = 'block';
+        }
+      }
+
+      updateStats();
+      saveProgress(); 
+
+      const isLastInSection = (currentQuestionIdx === quizData.length - 1) || (quizData[currentQuestionIdx + 1].sectionId !== q.sectionId);
+
+      if (isLastInSection) {
+        let percentage = (sectionCorrect / sectionTotal) * 100;
+        if (percentage >= 75) {
+          document.getElementById('feedback-text').innerText += ` | Section Cleared! (${Math.round(percentage)}%)`;
+          if (currentQuestionIdx < quizData.length - 1) {
+            document.getElementById('next-sec-btn').style.display = 'block';
+          } else {
+            document.getElementById('next-btn').innerText = 'FINISH HEIST 🏆';
+            document.getElementById('next-btn').style.display = 'block';
+            saveLeaderboardScore();
+          }
+        } else {
+          document.getElementById('feedback-text').innerText = `⚠️ Section Failed (${Math.round(percentage)}%). You need 75% to unlock the next level!`;
+          document.getElementById('feedback-text').style.color = 'var(--danger)';
+
+          const activeCard = document.getElementById(`sec-card-${q.sectionId}`);
+          if (activeCard) {
+            activeCard.className = 'sector-card failed';
+            document.getElementById(`sec-icon-${q.sectionId}`).innerText = '⚠️';
+          }
+          document.getElementById('retry-btn').style.display = 'block';
+        }
+      } else {
+        document.getElementById('next-btn').innerText = 'NEXT QUESTION ➔';
+        document.getElementById('next-btn').style.display = 'block';
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestionIdx++;
+      if (currentQuestionIdx < quizData.length) {
+        loadQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function advanceSection() {
+      currentQuestionIdx++;
+      sectionCorrect = 0;
+      sectionTotal = 0;
+      loadQuestion();
+    }
+
+    function retrySection() {
+      const currentSecId = quizData[currentQuestionIdx].sectionId;
+      currentQuestionIdx = quizData.findIndex(q => q.sectionId === currentSecId);
+      sectionCorrect = 0;
+      sectionTotal = 0;
+      loadQuestion();
+    }
+
+    // Leaderboard Management
+    function saveLeaderboardScore() {
+      let lb = JSON.parse(localStorage.getItem('pm2_math_leaderboard') || '[]');
+      lb.push({ name: agentAlias, cash: cash, date: new Date().toLocaleDateString() });
+      lb.sort((a, b) => b.cash - a.cash);
+      lb = lb.slice(0, 5); // Keep top 5
+      localStorage.setItem('pm2_math_leaderboard', JSON.stringify(lb));
+      renderLeaderboards();
+    }
+
+    function renderLeaderboards() {
+      const lb = JSON.parse(localStorage.getItem('pm2_math_leaderboard') || '[]');
+      const container1 = document.getElementById('leaderboard-list');
+      const container2 = document.getElementById('end-leaderboard-list');
+      
+      let html = '';
+      if (lb.length === 0) {
+        html = '<div style="text-align: center; color: #94a3b8; font-size: 0.85rem;">No missions completed yet. Be the first!</div>';
+      } else {
+        lb.forEach((entry, idx) => {
+          html += `<div class="leaderboard-item"><span>${idx + 1}. <b>${entry.name}</b></span> <span class="cash-text">$${entry.cash.toLocaleString()}</span></div>`;
+        });
+      }
+
+      if (container1) container1.innerHTML = html;
+      if (container2) container2.innerHTML = html;
+    }
+
+    function endGame() {
+      localStorage.removeItem('pm2_math_heist_save'); 
+      saveLeaderboardScore();
+      showScreen('end-screen');
+      document.getElementById('end-agent-name').innerText = agentAlias;
+      document.getElementById('final-cash').innerText = `$${cash.toLocaleString()}`;
+      
+      let title = "";
+      if (cash >= 5000) title = "🏆 Master Vault Hacker (Grade 4 Math Legend!)";
+      else if (cash >= 4000) title = "🥈 Senior Safecracker!";
+      else title = "🥉 Apprentice Burglar!";
+      
+      document.getElementById('rank-text').innerText = title;
+    }
+  </script>
+</body>
+</html>
